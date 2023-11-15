@@ -1,0 +1,28 @@
+{
+  "name": "rest-login-notepad",
+  "version": "1.0.0",
+  "description": "a notepad with users and a restful api",
+  "main": "index.js",
+  "scripts": {
+    "setupDocker": "docker build -t restful-api . && docker run -d -p 27017:27017 --name docker-restful-api restful-api",
+    "cleanDocker": "docker rm -f docker-restful-api",
+    "startDocker": "docker start docker-restful-api",
+    "stopDocker": "docker stop docker-restful-api",
+    "devStart": "nodemon index.js && npm run startDocker",
+    "server": "npm run startDocker && node index.js",
+    "client": "cd client && npm start",
+    "start": "concurrently \"npm run server\" \"npm run client\"",
+    "develop": "concurrently \"npm run devStart\" \"npm run client\""
+  },
+  "author": "Johannes Ström",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "mongoose": "^8.0.0"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "nodemon": "^3.0.1"
+  }
+}
