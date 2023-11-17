@@ -8,10 +8,10 @@ async function getNote(req, res, next) {
   try {
     note = await Note.findOne({owner: req.params.username});
     if (note == null) {
-      return res.status(404).json({ message: "Cannot find Note" });
+      return res.status(404).json({ status:404, message: "Cannot find Note" });
     }
   } catch (err) {
-    return res.status(500).json({ message: err.message });
+    return res.status(500).json({ status:500, message: err.message });
   }
   res.note = note;
   next();
@@ -23,13 +23,13 @@ router.get("/", async (req, res) => {
     const notes = await Note.find()
     res.json(notes)
   } catch (err) {
-    res.status(500).json({message: err.message})
+    res.status(500).json({status: 500, message: err.message})
   }
 });
 
 // Get One Route
 router.get("/:username", getNote, async (req, res) => {
-  res.json(res.note)
+  res.json({ owner: res.note.owner, notes:res.note.notes, status: 201})
 });
 
 // Create One Route
@@ -39,14 +39,14 @@ router.post("/", async (req, res) => {
   });
   noteExists = await Note.exists({owner: req.body.username});
   if (noteExists !== null) {
-    res.status(405).json({message: "Error: note allready exists, not allowed to make more."})
+    res.status(405).json({status: 405, message: "Error: note allready exists, not allowed to make more."})
     return;
   }
   try {
     const newNote = await note.save();
-    res.status(201).json({ newNote });
+    res.status(201).json({status: 201, newNote });
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    res.status(400).json({status: 400, message: err.message });
   }
 });
 

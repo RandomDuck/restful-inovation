@@ -18,15 +18,15 @@ class queryHandler {
 }
 
 async function httpRequsest(type, data, url) {
+  const response = await fetch(url, {
+    method: type,
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: data !== null || data !== undefined ? JSON.stringify(data) : undefined,
+  });
+  
   try {
-    const response = await fetch(url, {
-      method: type,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: data !== null || data !== undefined ? JSON.stringify(data) : undefined,
-    });
-
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
@@ -35,7 +35,7 @@ async function httpRequsest(type, data, url) {
     return responseData;
   } catch (error) {
     console.error('Error:', error.message);
-    return null;
+    return await response.json();
   }
 }
 

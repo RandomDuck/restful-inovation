@@ -31,7 +31,7 @@ router.get("/", async (req, res) => {
 router.post("/:username", async (req, res) => {
   const user = await User.findOne({username: req.params.username.toLowerCase()});
   if (user !== null && req.body.password === user.password) {
-    res.json({login: true, id: user.id, user: user.username});
+    res.json({login: true, user: user.username});
   } else {
     res.json({login: false});
   }
@@ -40,20 +40,20 @@ router.post("/:username", async (req, res) => {
 // Create One Route
 router.post("/", async (req, res) => {
 
-  const usercheck = await User.findOne({username: req.params.username.toLowerCase()});
+  const usercheck = await User.findOne({username: req.body.username.toLowerCase()});
   const user = new User({
     username: req.body.username.toLowerCase(),
     password: req.body.password
   });
   try {
     if (usercheck !== null) {
-      res.status(500).json({ message: "user allready exists" });
+      res.status(500).json({ status: 500, message: "user allready exists" });
     } else {
       const newUser = await user.save();
-      res.status(201).json({ newUser });
+      res.status(201).json({ status: 201, newUser });
     }
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    res.status(400).json({ status: 400, message: err.message });
   }
 });
 

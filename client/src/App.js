@@ -38,16 +38,13 @@ function NoteUi({token}) {
   }
 
   useEffect(()=>{
-    try {
-      queryHandler.get('/notes/'+name).then((res) => {
+    const fetchData = async ()=>{
+      const res = await queryHandler.get('/notes/'+name);
+      if(res.status === 201) {
         setTexts([...res.notes])
-      });
+      }
     }
-    catch {
-      queryHandler.post('/notes/', {username: name}).then((res)=>{
-        setTexts([...res.notes])
-      });
-    }
+    fetchData();
     // eslint-disable-next-line 
   }, []);
 
@@ -84,8 +81,11 @@ function LoginUi({callback}) {
     callback(res)
   }
   async function register() {
-    await queryHandler.post(`/users/`, {username: name, password: pass})
-    login();
+    const res = await queryHandler.post(`/users/`, {username: name, password: pass});
+    if (res?.status === 201) {
+      await queryHandler.post('/notes/', {username: name})
+      callback({login: true, user: name})
+    }
   }
   
   return (
